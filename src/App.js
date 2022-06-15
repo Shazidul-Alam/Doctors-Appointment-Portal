@@ -1,9 +1,28 @@
 import logo from './logo.svg';
 import './App.css';
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link
+} from "react-router-dom";
+import Home from './Components/Home/Home/Home';
 
 function App() {
   return (
-    <h1>Here it is</h1>
+   <Router>
+      <Switch>
+          <Route path="/about">
+            <Home />
+          </Route>
+          <Route path="/users">
+            <Home />
+          </Route>
+          <Route path="/">
+            <Home />
+          </Route>
+        </Switch>
+   </Router>
   );
 }
 
