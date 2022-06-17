@@ -9,7 +9,7 @@ import { useHistory, useLocation } from 'react-router-dom/cjs/react-router-dom.m
 
 const Login = () => {
     const [loginData,setLoginData]=useState({})
-    const {user,login,isLoading,authError}=useAuth()
+    const {user,login,isLoading,authError,signInWithGoogle}=useAuth()
 
     const location=useLocation()
     const history=useHistory()
@@ -26,6 +26,9 @@ const Login = () => {
         login(loginData.email,loginData.password,location,history)
         e.preventDefault();
     }
+    const handleGoogleSignIn=()=>{
+        signInWithGoogle(location,history)
+    }
     return (
         <Container>
             <Grid container spacing={2}>
@@ -37,7 +40,7 @@ const Login = () => {
                             id="standard-basic"
                             label="Your Email"
                             name="email"
-                            onChange={handleOnChange}
+                            onBlur={handleOnChange}
                             variant="standard" />
                         <TextField
                             sx={{ width: '75%', m: 1 }}
@@ -45,7 +48,7 @@ const Login = () => {
                             label="Your Password"
                             type="password"
                             name="password"
-                            onChange={handleOnChange}
+                            onBlur={handleOnChange}
                             variant="standard" />
 
                         <Button sx={{ width: '75%', m: 2 }} type="submit" variant="contained">Login</Button>
@@ -53,7 +56,10 @@ const Login = () => {
                             style={{ textDecoration: 'none' }}
                             to="/register">
                             <Button sx={{ml:1}} variant="text">New User? Please Register</Button>
+                            
                         </NavLink>
+                        <p>---------------------------------</p>
+                             <Button onClick={handleGoogleSignIn} variant="contained">Log In with Google</Button>
                    </form>
                    {isLoading && <CircularProgress></CircularProgress>}
                    {user?.email && <Alert severity="success">Successfully LoggedIn</Alert> }
