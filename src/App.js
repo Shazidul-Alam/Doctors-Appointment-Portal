@@ -11,18 +11,21 @@ import Appointment from './Pages/Appointment/Appointment/Appointment';
 
 import Register from './Pages/Login/Register/Register';
 import Login from './Pages/Login/Login/Login';
+import AuthProvider from './contexts/AuthProvider/AuthProvider';
+import PrivateRoute from './Pages/Login/PrivateRoute/PrivateRoute';
 
 function App() {
   return (
-   <Router>
-      <Switch>
-          <Route  path="/appointment">
+    <AuthProvider>
+      <Router>
+        <Switch>
+          <PrivateRoute path="/appointment">
             <Appointment></Appointment>
-          </Route>
-          <Route  path="/login">
+          </PrivateRoute>
+          <Route path="/login">
             <Login></Login>
           </Route>
-          <Route  path="/register">
+          <Route path="/register">
             <Register></Register>
           </Route>
           <Route path="/users">
@@ -32,7 +35,9 @@ function App() {
             <Home />
           </Route>
         </Switch>
-   </Router>
+      </Router>
+    </AuthProvider>
+
   );
 }
 

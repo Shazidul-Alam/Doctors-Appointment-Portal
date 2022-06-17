@@ -1,12 +1,19 @@
-import { Container, Typography, Button } from '@mui/material';
+import { Container, Typography, Button, CircularProgress, Alert } from '@mui/material';
 import React,{useState} from 'react';
 import  Grid  from '@mui/material/Grid';
-import login from '../../../images/login.png'
+import loginimg from '../../../images/login.png'
 import  TextField  from '@mui/material/TextField';
 import { NavLink } from 'react-router-dom';
+import useAuth from '../../../hooks/useAuth';
+import { useHistory, useLocation } from 'react-router-dom/cjs/react-router-dom.min';
 
 const Login = () => {
     const [loginData,setLoginData]=useState({})
+    const {user,login,isLoading,authError}=useAuth()
+
+    const location=useLocation()
+    const history=useHistory()
+
     const handleOnChange=e=>{
         const field=e.target.name;
         const value=e.target.value;
@@ -16,7 +23,7 @@ const Login = () => {
     }
 
     const handleLoginSubmit=e=>{
-
+        login(loginData.email,loginData.password,location,history)
         e.preventDefault();
     }
     return (
@@ -45,12 +52,15 @@ const Login = () => {
                         <NavLink
                             style={{ textDecoration: 'none' }}
                             to="/register">
-                            <Button sx={{ml:14}} variant="text">New User? Please Register</Button>
+                            <Button sx={{ml:1}} variant="text">New User? Please Register</Button>
                         </NavLink>
                    </form>
+                   {isLoading && <CircularProgress></CircularProgress>}
+                   {user?.email && <Alert severity="success">Successfully LoggedIn</Alert> }
+                   {authError && <Alert severity="error">{authError}</Alert>}
                 </Grid>
                 <Grid item xs={12} md={6}>
-                   <img src={login} style={{width: '100%'}} alt="" />
+                   <img src={loginimg} style={{width: '100%'}} alt="" />
                 </Grid>
                 
             </Grid>
