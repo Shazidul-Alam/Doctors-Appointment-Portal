@@ -8,6 +8,7 @@ const useFirebase = () => {
     const [user, setUser] = useState({})
     const [isLoading, setIsLoading] = useState(true)
     const [authError, setAuthError] = useState('')
+    const [admin,setAdmin]=useState(false)
     const auth = getAuth();
     const provider = new GoogleAuthProvider();
 
@@ -18,6 +19,7 @@ const useFirebase = () => {
                 setAuthError('')
                 const newUser={email, displayName: name}
                 setUser(newUser)
+                saveUser(email,name,'POST')
                 updateProfile(auth.currentUser, {
                     displayName: name
                   }).then(() => {
@@ -52,7 +54,11 @@ const useFirebase = () => {
         signInWithPopup(auth, provider)
             .then((result) => {
                 const user = result.user;
+                console.log(user);
+                saveUser(user.email,user.displayName,'PUT')
                 setAuthError('')
+                const destination = location?.state?.from || '/'
+                history.replace(destination)
             }).catch((error) => {
                 setAuthError(error.message)
             }).finally(() => setIsLoading(false));;
@@ -70,6 +76,12 @@ const useFirebase = () => {
         return () => unSubscribe;
     }, [])
 
+    useEffect(() => {
+        fetch(`http://localhost:5500/users/${user.email}`)
+        .then(res=>res.json())
+        .then(data=>setAdmin(data.admin))
+    },[user.email])
+
     const logOut = () => {
         setIsLoading(true)
         signOut(auth).then(() => {
@@ -78,12 +90,24 @@ const useFirebase = () => {
             .finally(() => setIsLoading(false))
 
     }
+    const saveUser=(email,displayName,method)=>{
+        const user={email,displayName}
+        fetch('http://localhost:5500/users',{
+            method: method,
+            headers: {
+                'content-type': 'application/json'
+            },
+            body: JSON.stringify(user)
+        })
+        .then()
+    }
 
 
     return {
         user,
         isLoading,
         authError,
+        admin,
         login,
         signInWithGoogle,
         registerUser,

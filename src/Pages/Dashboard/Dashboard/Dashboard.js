@@ -17,16 +17,26 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import { Grid, Button } from '@mui/material';
-import Calender from '../../Shared/Calender/Calender';
-import Appointments from '../Appointments/Appointments';
-import { Link } from 'react-router-dom';
+import {
+    BrowserRouter as Router,
+    Switch,
+    Route,
+    Link,
+    useParams,
+    useRouteMatch
+} from "react-router-dom";
+import DashboardHome from '../DashboardHome/DashboardHome';
+import MakeAdmin from '../MakeAdmin/MakeAdmin';
+import AddDoctor from '../AddDoctor/AddDoctor';
+import useAuth from '../../../hooks/useAuth';
 
 const drawerWidth = 200;
 
 function ResponsiveDrawer(props) {
     const { window } = props;
     const [mobileOpen, setMobileOpen] = React.useState(false);
-    const [date,setDate] = React.useState(new Date());
+    let { path, url } = useRouteMatch();
+    const { admin } = useAuth()
 
     const handleDrawerToggle = () => {
         setMobileOpen(!mobileOpen);
@@ -37,9 +47,21 @@ function ResponsiveDrawer(props) {
             <Toolbar />
             <Divider />
             <List>
-            <Link to='/appointment' >
-                            <Button sx={{ml:4}} color="inherit">Appointment</Button>
-                        </Link>
+                <Link to='/appointment' >
+                    <Button sx={{ ml: 4 }} color="inherit">Appointment</Button>
+                </Link>
+                <Link to={`${url}`} >
+                    <Button sx={{ ml: 4 }} color="inherit">Dashboard</Button>
+                </Link>
+                {admin && <Box>
+                    <Link to={`${url}/makeAdmin`} >
+                        <Button sx={{ ml: 4 }} color="inherit">Make Admin</Button>
+                    </Link>
+
+                    <Link to={`${url}/addDoctor`} >
+                        <Button sx={{ ml: 4 }} color="inherit">Add Doctor</Button>
+                    </Link>
+                </Box>}
                 {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
                     <ListItem key={text} disablePadding>
                         <ListItemButton>
@@ -120,20 +142,17 @@ function ResponsiveDrawer(props) {
                 sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${drawerWidth}px)` } }}
             >
                 <Toolbar />
-                <Typography paragraph>
-                    <Grid container spacing={2}>
-                        <Grid item xs={12} md={4}>
-                            <Calender
-                            date={date}
-                            setDate={setDate}
-                            ></Calender>
-                        </Grid>
-                        <Grid item xs={12} md={8}>
-                           <Appointments date={date}></Appointments>
-                        </Grid>
-
-                    </Grid>
-                </Typography>
+                <Switch>
+                    <Route exact path={path}>
+                        <DashboardHome></DashboardHome>
+                    </Route>
+                    <Route path={`${path}/makeAdmin`}>
+                        <MakeAdmin></MakeAdmin>
+                    </Route>
+                    <Route path={`${path}/addDoctor`}>
+                        <AddDoctor></AddDoctor>
+                    </Route>
+                </Switch>
 
             </Box>
         </Box>
